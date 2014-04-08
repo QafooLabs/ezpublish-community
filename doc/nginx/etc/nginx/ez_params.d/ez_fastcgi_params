@@ -1,0 +1,16 @@
+
+# Including the distribution's default fastcgi parameters
+include fastcgi_params;
+
+# TODO are these usefull
+fastcgi_buffer_size 128k;
+fastcgi_buffers 4 256k;
+fastcgi_busy_buffers_size 256k;
+
+# TODO are these usefull
+fastcgi_split_path_info ^(.+\.php)(/.+)$;
+fastcgi_param  PATH_INFO          $fastcgi_path_info;
+fastcgi_param  PATH_TRANSLATED    $document_root$fastcgi_path_info;
+
+fastcgi_index index.php;
+
