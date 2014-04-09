@@ -10,6 +10,8 @@
 /ezpublish/config/parameters.yml
 /ezpublish/config/ezpublish_prod.yml
 /ezpublish/config/ezpublish_dev.yml
+/ezpublish/config/ezpublish.yml
+/ezpublish/bootstrap.php.cache
 /web/index_treemenu.php
 /web/index_rest.php
 /web/index_cluster.php
@@ -24,4 +26,4 @@ composer.lock
 .buildpath
 .project
 .settings/
-
+/web/css

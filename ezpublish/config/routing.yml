@@ -1,3 +1,7 @@
+qafoo_blog:
+    resource: "@QafooBlogBundle/Resources/config/routing.xml"
+    prefix:   /
+
 login:
     path:   /login
     defaults:  { _controller: ezpublish.security.controller:loginAction }
