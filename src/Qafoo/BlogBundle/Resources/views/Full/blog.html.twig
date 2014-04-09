@@ -1,0 +1,14 @@
+{% extends noLayout
+    ? viewbaseLayout
+    : "QafooBlogBundle::layout.html.twig"
+%}
+
+{% block content %}
+    <h1>{{ location.contentInfo.name }}</h1>
+
+    {{ ez_render_field(content, "description") }}
+
+    {{ render(controller("qafoo_blog.blog_controller:postsAction", {
+        "parentLocationId": location.id,
+        "viewType": 'summary' })) }}
+{% endblock %}

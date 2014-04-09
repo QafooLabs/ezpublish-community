@@ -1,0 +1,7 @@
+{% extends noLayout ? viewbaseLayout : "QafooBlogBundle::layout.html.twig" %}
+{% block content %}
+    <h1>{{ location.contentInfo.name }}</h1>
+    <div>
+        {{ ez_render_field( content, "body" ) }}
+    </div>
+{% endblock %}
