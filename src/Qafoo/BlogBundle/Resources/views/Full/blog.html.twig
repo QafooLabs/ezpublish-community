@@ -1,0 +1,28 @@
+{% extends noLayout
+    ? viewbaseLayout
+    : "QafooBlogBundle::layout.html.twig"
+%}
+
+{% block content %}
+    <h1>{{ location.contentInfo.name }}</h1>
+
+    {{ ez_render_field(content, "description") }}
+
+    <div>
+        {% for post in posts %}
+            {{
+                render(
+                    controller(
+                        "ez_content:viewLocation",
+                        {
+                            'locationId': post.contentInfo.mainLocationId,
+                            'viewType': 'summary'
+                        }
+                    )
+                )
+            }}
+        {% endfor %}
+
+        {{ pagerfanta(posts, 'twitter_bootstrap_translated', {'routeName': location}) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends viewbaseLayout %}
+{% block content %}
+    <h2><a href="{{ path( location ) }}">{{ location.contentInfo.name }}</a></h2>
+    {{ ez_render_field( content, "body" ) }}
+{% endblock %}
