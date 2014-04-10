@@ -61,6 +61,7 @@ ezpublish:
                 list:
                     blog:
                         controller: qafoo_blog.blog_controller:viewLocation
+                        template: QafooBlogBundle::posts_list.html.twig
                         match:
                             Identifier\ContentType : blog
                 full:

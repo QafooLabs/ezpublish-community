@@ -16,11 +16,11 @@ class BlogController extends ViewController
     public function viewLocation( $locationId, $viewType, $layout = false, array $params = array() )
     {
         $locationService = $this->getRepository()->getLocationService();
-        $root = $locationService->loadLocation( $locationId );
-        $modificationDate = $root->contentInfo->modificationDate;
+        $location = $locationService->loadLocation( $locationId );
+        $modificationDate = $location->contentInfo->modificationDate;
 
         $postResults = $this->fetchSubTree(
-            $root,
+            $location,
             array('blog_post'),
             array(new SortClause\Field('blog_post', 'publication_date', Query::SORT_DESC, 'eng-US'))
         );
@@ -34,17 +34,13 @@ class BlogController extends ViewController
             }
         }
 
-        $response = $this->buildResponse('BlogPosts' . $locationId, $modificationDate);
+        $params['posts'] = $posts;
 
-        if ( $response->isNotModified( $this->getRequest() ) ) {
-            return $response;
-        }
+        $response = $this->container->get( 'ez_content' )->viewLocation( $locationId, $viewType, $layout, $params );
+        $response->setETag('BlogPostList' . $locationId);
+        $response->setLastModified($modificationDate);
 
-        return $this->render(
-            'QafooBlogBundle::posts_list.html.twig',
-            array( 'posts' => $posts, 'viewType' => $viewType, 'noLayout' => !$layout ),
-            $response
-        );
+        return $response;
     }
 
     protected function fetchSubTree(Location $subTreeLocation, array $typeIdentifiers, array $sortMethods)
