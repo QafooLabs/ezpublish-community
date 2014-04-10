@@ -12,23 +12,10 @@
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>
-
-            <call method="addTypeHandler">
-                <argument>17</argument>
-                <argument type="service" id="qafoo_blog.blog_location_handler" />
-            </call>
-
-            <call method="addTypeHandler">
-                <argument>18</argument>
-                <argument type="service" id="qafoo_blog.blog_post_location_handler" />
-            </call>
         </service>
 
-        <service id="qafoo_blog.blog_location_handler" class="Qafoo\BlogBundle\Controller\BlogLocationHandler">
+        <service id="qafoo_blog.content_service" class="Qafoo\BlogBundle\Service\QafooContentService">
             <argument type="service" id="ezpublish.api.service.search" />
-        </service>
-
-        <service id="qafoo_blog.blog_post_location_handler" class="Qafoo\BlogBundle\Controller\BlogPostLocationHandler">
         </service>
     </services>
 </container>
