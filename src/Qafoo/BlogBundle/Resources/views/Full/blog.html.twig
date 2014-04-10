@@ -8,7 +8,9 @@
 
     {{ ez_render_field(content, "description") }}
 
-    {{ render(controller("qafoo_blog.blog_controller:postsAction", {
-        "parentLocationId": location.id,
-        "viewType": 'summary' })) }}
+    <div>
+    {{ render(controller("ez_content:viewLocation", {
+        "locationId": location.id,
+        "viewType": 'list' })) }}
+    </div>
 {% endblock %}

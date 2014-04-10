@@ -13,10 +13,10 @@ use eZ\Publish\API\Repository\Values\Content\Location;
 
 class BlogController extends ViewController
 {
-    public function postsAction($parentLocationId, $viewType = 'summary')
+    public function viewLocation( $locationId, $viewType, $layout = false, array $params = array() )
     {
         $locationService = $this->getRepository()->getLocationService();
-        $root = $locationService->loadLocation( $parentLocationId );
+        $root = $locationService->loadLocation( $locationId );
         $modificationDate = $root->contentInfo->modificationDate;
 
         $postResults = $this->fetchSubTree(
@@ -34,7 +34,7 @@ class BlogController extends ViewController
             }
         }
 
-        $response = $this->buildResponse('BlogPosts' . $parentLocationId, $modificationDate);
+        $response = $this->buildResponse('BlogPosts' . $locationId, $modificationDate);
 
         if ( $response->isNotModified( $this->getRequest() ) ) {
             return $response;
@@ -42,7 +42,7 @@ class BlogController extends ViewController
 
         return $this->render(
             'QafooBlogBundle::posts_list.html.twig',
-            array( 'posts' => $posts, 'viewType' => $viewType ),
+            array( 'posts' => $posts, 'viewType' => $viewType, 'noLayout' => !$layout ),
             $response
         );
     }
@@ -66,4 +66,5 @@ class BlogController extends ViewController
 
         return $searchService->findContent( $query );
     }
+
 }
