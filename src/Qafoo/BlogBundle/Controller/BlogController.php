@@ -2,7 +2,9 @@
 
 namespace Qafoo\BlogBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use eZ\Publish\Core\MVC\Symfony\Controller\Content\ViewController;
 use eZ\Publish\API\Repository\Values\Content;
 use eZ\Publish\API\Repository\Values\Content\Query;
@@ -11,30 +13,24 @@ use eZ\Publish\API\Repository\Values\Content\Search\SearchResult;
 use eZ\Publish\API\Repository\Values\Content\Query\SortClause;
 use eZ\Publish\API\Repository\Values\Content\Location;
 
+use eZ\Publish\Core\Pagination\Pagerfanta\ContentSearchAdapter;
+use Pagerfanta\Pagerfanta;
+
 class BlogController extends ViewController
 {
-    public function viewLocation( $locationId, $viewType, $layout = false, array $params = array() )
+    public function viewLocation( $locationId, $viewType, $layout = false, array $params = array(), Request $request = null )
     {
         $locationService = $this->getRepository()->getLocationService();
         $location = $locationService->loadLocation( $locationId );
         $modificationDate = $location->contentInfo->modificationDate;
 
-        $postResults = $this->fetchSubTree(
+        $params['posts'] = $this->fetchSubTree(
             $location,
             array('blog_post'),
-            array(new SortClause\Field('blog_post', 'publication_date', Query::SORT_DESC, 'eng-US'))
+            array(new SortClause\Field('blog_post', 'publication_date', Query::SORT_DESC, 'eng-US')),
+            $request->query->get('page', 1),
+            1
         );
-
-        $posts = array();
-        foreach ( $postResults->searchHits as $hit ) {
-            $posts[] = $hit->valueObject;
-
-            if ($hit->valueObject->contentInfo->modificationDate > $modificationDate) {
-                $modificationDate = $hit->valueObject->contentInfo->modificationDate;
-            }
-        }
-
-        $params['posts'] = $posts;
 
         $response = $this->container->get( 'ez_content' )->viewLocation( $locationId, $viewType, $layout, $params );
         $response->setETag('BlogPostList' . $locationId);
@@ -43,7 +39,7 @@ class BlogController extends ViewController
         return $response;
     }
 
-    protected function fetchSubTree(Location $subTreeLocation, array $typeIdentifiers, array $sortMethods)
+    protected function fetchSubTree(Location $subTreeLocation, array $typeIdentifiers, array $sortMethods, $page, $limit = 20)
     {
         $searchService = $this->getRepository()->getSearchService();
 
@@ -58,9 +54,14 @@ class BlogController extends ViewController
         if ( !empty( $sortMethods ) ) {
             $query->sortClauses = $sortMethods;
         }
-        $query->limit = 20;
 
-        return $searchService->findContent( $query );
+        $pager = new Pagerfanta(
+            new ContentSearchAdapter( $query, $searchService )
+        );
+        $pager->setMaxPerPage($limit);
+        $pager->setCurrentPage($page);
+
+        return $pager;
     }
 
 }

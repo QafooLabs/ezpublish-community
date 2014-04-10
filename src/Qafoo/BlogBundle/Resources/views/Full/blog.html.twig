@@ -9,8 +9,10 @@
     {{ ez_render_field(content, "description") }}
 
     <div>
-    {{ render(controller("ez_content:viewLocation", {
-        "locationId": location.id,
-        "viewType": 'list' })) }}
+    {{ render(controller(
+            "ez_content:viewLocation",
+            {"locationId": location.id, "viewType": 'list' },
+            {'page': app.request.query.get('page')}
+        )) }}
     </div>
 {% endblock %}
