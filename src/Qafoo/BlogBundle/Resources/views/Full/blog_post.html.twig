@@ -4,4 +4,12 @@
     <div>
         {{ ez_render_field( content, "body" ) }}
     </div>
+
+    <h4>Comments</h4>
+
+    <ul>
+    {% for comment in comments %}
+        <li>{{ comment.text }}</li>
+        {% endfor %}
+        </ul>
 {% endblock %}

@@ -18,50 +18,31 @@ use Pagerfanta\Pagerfanta;
 
 class BlogController extends ViewController
 {
+    private $typeHandlers = array();
+
+    public function addTypeHandler($contentTypeId, $handler)
+    {
+        $this->typeHandlers[$contentTypeId] = $handler;
+    }
+
+    private function getHandler($contentTypeId)
+    {
+        return $this->typeHandlers[$contentTypeId];
+    }
+
     public function viewLocation( $locationId, $viewType, $layout = false, array $params = array(), Request $request = null )
     {
         $locationService = $this->getRepository()->getLocationService();
         $location = $locationService->loadLocation( $locationId );
         $modificationDate = $location->contentInfo->modificationDate;
 
-        $params['posts'] = $this->fetchSubTree(
-            $location,
-            array('blog_post'),
-            array(new SortClause\Field('blog_post', 'publication_date', Query::SORT_DESC, 'eng-US')),
-            $request->query->get('page', 1),
-            1
-        );
+        $handler = $this->getHandler($location->contentInfo->contentTypeId);
+        $params = $handler->handle($location, $viewType, $params, $request);
 
         $response = $this->container->get( 'ez_content' )->viewLocation( $locationId, $viewType, $layout, $params );
-        $response->setETag('BlogPostList' . $locationId);
+        $response->setETag($location->contentInfo->contentTypeId . '-'. $locationId);
         $response->setLastModified($modificationDate);
 
         return $response;
     }
-
-    protected function fetchSubTree(Location $subTreeLocation, array $typeIdentifiers, array $sortMethods, $page, $limit = 20)
-    {
-        $searchService = $this->getRepository()->getSearchService();
-
-        $criterion = array(
-            new Criterion\ContentTypeIdentifier( $typeIdentifiers ),
-            new Criterion\Subtree( $subTreeLocation->pathString )
-        );
-
-        $query = new Query();
-        $query->criterion = new Criterion\LogicalAnd($criterion);
-
-        if ( !empty( $sortMethods ) ) {
-            $query->sortClauses = $sortMethods;
-        }
-
-        $pager = new Pagerfanta(
-            new ContentSearchAdapter( $query, $searchService )
-        );
-        $pager->setMaxPerPage($limit);
-        $pager->setCurrentPage($page);
-
-        return $pager;
-    }
-
 }

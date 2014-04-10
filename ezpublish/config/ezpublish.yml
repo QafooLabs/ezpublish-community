@@ -65,9 +65,10 @@ ezpublish:
                         match:
                             Identifier\ContentType : blog
                     blog_post:
+                        controller: qafoo_blog.blog_controller:viewLocation
                         template: QafooBlogBundle:Full:blog_post.html.twig
                         match:
-                            Identifier\ContentType : blog
+                            Identifier\ContentType : blog_post
                 summary:
                     blog_post:
                         template: QafooBlogBundle:Summary:blog_post.html.twig
