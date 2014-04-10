@@ -9,10 +9,20 @@
     {{ ez_render_field(content, "description") }}
 
     <div>
-    {{ render(controller(
-            "ez_content:viewLocation",
-            {"locationId": location.id, "viewType": 'list' },
-            {'page': app.request.query.get('page')}
-        )) }}
+        {% for post in posts %}
+            {{
+                render(
+                    controller(
+                        "ez_content:viewLocation",
+                        {
+                            'locationId': post.contentInfo.mainLocationId,
+                            'viewType': 'summary'
+                        }
+                    )
+                )
+            }}
+        {% endfor %}
+
+        {{ pagerfanta(posts, 'twitter_bootstrap_translated', {'routeName': location}) }}
     </div>
 {% endblock %}

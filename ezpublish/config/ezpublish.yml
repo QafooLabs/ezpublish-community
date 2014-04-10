@@ -58,14 +58,9 @@ ezpublish:
                 - eng-US
             var_dir: var/ezdemo_site
             location_view:
-                list:
-                    blog:
-                        controller: qafoo_blog.blog_controller:viewLocation
-                        template: QafooBlogBundle::posts_list.html.twig
-                        match:
-                            Identifier\ContentType : blog
                 full:
                     blog:
+                        controller: qafoo_blog.blog_controller:viewLocation
                         template: QafooBlogBundle:Full:blog.html.twig
                         match:
                             Identifier\ContentType : blog
